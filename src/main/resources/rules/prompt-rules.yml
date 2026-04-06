@@ -5,9 +5,18 @@ rules:
     patterns:
       - "忽略之前"
       - "ignore previous"
+      - "bypass policy"
   - key: SYSTEM_PROMPT_LEAK
     attackType: PROMPT_EXTRACTION
     score: 40
     patterns:
       - "系统提示词"
       - "system prompt"
+      - "hidden instructions"
+  - key: INTERNAL_CONFIG
+    attackType: SENSITIVE_DATA_INDUCTION
+    score: 30
+    patterns:
+      - "内部配置"
+      - "internal config"
+      - "api key"

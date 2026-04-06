@@ -10,8 +10,12 @@ import java.util.regex.Pattern;
 
 public class StrategyService {
 
-    private static final Pattern IGNORE_PREVIOUS_PATTERN = Pattern.compile("(?i)ignore previous[^。.!?\\n]*");
+    private static final Pattern IGNORE_PREVIOUS_PATTERN = Pattern.compile("(?i)ignore previous[^。？！!?\\n]*");
 
+    /**
+     * 这里负责把“分数”翻译成真正的系统动作。
+     * processedPrompt 表示经过策略处理后，最终允许送给模型的提示词。
+     */
     public ShieldDecision decide(String prompt, List<DetectionHit> hits, int totalScore) {
         if (totalScore >= 70) {
             return new ShieldDecision(RiskLevel.HIGH, DefenseAction.BLOCK, totalScore, hits, "Request blocked");

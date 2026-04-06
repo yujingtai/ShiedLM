@@ -3,8 +3,8 @@ package com.shieldlm.web.dto;
 public class ChatForm {
 
     /**
-     * 用户在聊天框中输入的原始问题。
-     * 后续接入完整防护链路时，会先拿这个字段做输入检测。
+     * 用户在聊天框中输入的原始提示词。
+     * 后续主链路会先检测这个字段，再决定是否改写、拦截或放行。
      */
     private String prompt = "";
 

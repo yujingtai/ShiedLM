@@ -26,6 +26,7 @@ public class InputDetectionService {
     }
 
     public ShieldDecision analyze(String prompt) {
+        // 统一转成小写，避免规则匹配被大小写差异干扰。
         String normalizedPrompt = prompt.toLowerCase(Locale.ROOT);
         List<DetectionHit> hits = new ArrayList<>();
 
@@ -34,6 +35,7 @@ public class InputDetectionService {
                     .map(pattern -> pattern.toLowerCase(Locale.ROOT))
                     .anyMatch(normalizedPrompt::contains);
             if (matched) {
+                // 这里只记录命中事实，真正的风险等级和系统动作交给后面的服务处理。
                 hits.add(new DetectionHit(rule.key(), rule.attackType(), rule.score()));
             }
         }
