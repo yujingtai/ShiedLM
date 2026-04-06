@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="zh-CN" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ShieldLM 审计日志</title>
+    <link rel="stylesheet" th:href="@{/css/app.css}">
+</head>
+<body>
+<main class="layout">
+    <section class="topbar">
+        <div>
+            <p class="eyebrow">ShieldLM Audit</p>
+            <h1>审计日志</h1>
+        </div>
+        <nav class="page-links">
+            <a th:href="@{/}">聊天演示</a>
+            <a class="is-active" th:href="@{/audit}">审计日志</a>
+        </nav>
+    </section>
+
+    <section class="panel">
+        <div class="panel-header">
+            <h2>最近请求记录</h2>
+            <p>这里展示每次输入触发的风险等级、防御动作和最终输出，方便回溯模型防护过程。</p>
+        </div>
+
+        <div class="table-shell" th:if="${!#lists.isEmpty(records)}">
+            <table class="audit-table">
+                <thead>
+                <tr>
+                    <th>时间</th>
+                    <th>用户输入</th>
+                    <th>攻击类型</th>
+                    <th>风险等级</th>
+                    <th>防御动作</th>
+                    <th>最终回复</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr th:each="record : ${records}">
+                    <td th:text="${#temporals.format(record.createdAt, 'MM-dd HH:mm:ss')}">04-06 20:30:00</td>
+                    <td th:text="${record.userPrompt}">prompt</td>
+                    <td th:text="${record.attackTypes}">PROMPT_EXTRACTION</td>
+                    <td>
+                        <span class="risk-badge"
+                              th:text="${record.riskLevel}"
+                              th:classappend="${' risk-' + #strings.toLowerCase(record.riskLevel.name())}">
+                            HIGH
+                        </span>
+                    </td>
+                    <td th:text="${record.defenseAction}">BLOCK</td>
+                    <td th:text="${record.finalReply}">请求存在高风险，已被系统拦截。</td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <p class="empty-hint" th:if="${#lists.isEmpty(records)}">当前还没有审计记录，先去聊天页发起一次请求吧。</p>
+    </section>
+</main>
+</body>
+</html>
