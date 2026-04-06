@@ -1,0 +1,12 @@
+package com.shieldlm;
+
+import org.junit.jupiter.api.Test;
+import org.springframework.boot.test.context.SpringBootTest;
+
+@SpringBootTest
+class ShieldLmApplicationTests {
+
+    @Test
+    void contextLoads() {
+    }
+}
