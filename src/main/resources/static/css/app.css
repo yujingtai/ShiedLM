@@ -68,6 +68,10 @@ body {
     box-shadow: 0 20px 40px rgba(79, 55, 27, 0.08);
 }
 
+.split-panel {
+    margin-top: 24px;
+}
+
 .panel-header h2 {
     margin: 0 0 8px;
 }

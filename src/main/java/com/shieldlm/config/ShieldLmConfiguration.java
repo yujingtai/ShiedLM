@@ -21,7 +21,7 @@ public class ShieldLmConfiguration {
 
     /**
      * MVP 阶段先把规则写成固定 Bean，优先保证演示链路稳定可跑。
-     * 等后面做规则页时，再把它迁移到外部配置文件。
+     * 等后面做规则管理能力时，再平滑迁移到外部配置文件。
      */
     @Bean
     public List<PromptRule> promptRules() {

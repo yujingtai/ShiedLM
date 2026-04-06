@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="zh-CN" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ShieldLM 规则与统计</title>
+    <link rel="stylesheet" th:href="@{/css/app.css}">
+</head>
+<body>
+<main class="layout">
+    <section class="topbar">
+        <div>
+            <p class="eyebrow">ShieldLM Rules</p>
+            <h1>规则与统计</h1>
+        </div>
+        <nav class="page-links">
+            <a th:href="@{/}">聊天演示</a>
+            <a th:href="@{/audit}">审计日志</a>
+            <a class="is-active" th:href="@{/rules}">规则与统计</a>
+        </nav>
+    </section>
+
+    <section class="panel">
+        <div class="panel-header">
+            <h2>基础运行指标</h2>
+            <p>这些指标用于说明防护框架在演示期间识别了多少风险请求，以及系统拦截了多少输入或输出。</p>
+        </div>
+
+        <div class="metric-grid">
+            <article class="metric-card">
+                <span class="metric-label">总请求数</span>
+                <strong th:text="${stats.totalRequests}">0</strong>
+            </article>
+            <article class="metric-card">
+                <span class="metric-label">高风险请求</span>
+                <strong th:text="${stats.highRiskRequests}">0</strong>
+            </article>
+            <article class="metric-card">
+                <span class="metric-label">输入拦截次数</span>
+                <strong th:text="${stats.blockedRequests}">0</strong>
+            </article>
+            <article class="metric-card">
+                <span class="metric-label">输出拦截次数</span>
+                <strong th:text="${stats.outputBlockedRequests}">0</strong>
+            </article>
+        </div>
+    </section>
+
+    <section class="panel split-panel">
+        <div class="panel-header">
+            <h2>当前防护规则</h2>
+            <p>这里展示 MVP 当前内置的提示注入检测规则，便于你在答辩时解释系统是如何识别风险输入的。</p>
+        </div>
+
+        <div class="table-shell">
+            <table class="audit-table">
+                <thead>
+                <tr>
+                    <th>规则键</th>
+                    <th>攻击类型</th>
+                    <th>风险分值</th>
+                    <th>关键词/模式</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr th:each="rule : ${rules}">
+                    <td th:text="${rule.key}">SYSTEM_PROMPT_LEAK</td>
+                    <td th:text="${rule.attackType}">PROMPT_EXTRACTION</td>
+                    <td th:text="${rule.score}">40</td>
+                    <td th:text="${rule.patterns}">系统提示词、system prompt</td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+    </section>
+</main>
+</body>
+</html>
