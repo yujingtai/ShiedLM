@@ -1,0 +1,13 @@
+rules:
+  - key: IGNORE_PREVIOUS_RULES
+    attackType: PRIVILEGE_OVERRIDE
+    score: 30
+    patterns:
+      - "忽略之前"
+      - "ignore previous"
+  - key: SYSTEM_PROMPT_LEAK
+    attackType: PROMPT_EXTRACTION
+    score: 40
+    patterns:
+      - "系统提示词"
+      - "system prompt"
