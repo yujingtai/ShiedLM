@@ -1,0 +1,101 @@
+:root {
+    --bg: #f4efe7;
+    --panel: #fffdf8;
+    --ink: #1f2937;
+    --muted: #6b7280;
+    --line: #d9cfc0;
+    --accent: #b45309;
+    --accent-dark: #7c2d12;
+}
+
+* {
+    box-sizing: border-box;
+}
+
+body {
+    margin: 0;
+    font-family: "Microsoft YaHei UI", "Segoe UI", sans-serif;
+    color: var(--ink);
+    background:
+        radial-gradient(circle at top left, rgba(180, 83, 9, 0.10), transparent 32%),
+        linear-gradient(135deg, #f8f3ea 0%, #efe5d6 100%);
+}
+
+.layout {
+    width: min(1040px, calc(100% - 32px));
+    margin: 40px auto 72px;
+}
+
+.hero {
+    margin-bottom: 24px;
+}
+
+.eyebrow {
+    margin: 0 0 8px;
+    color: var(--accent-dark);
+    font-size: 13px;
+    font-weight: 700;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+}
+
+.hero h1 {
+    margin: 0 0 12px;
+    font-size: clamp(32px, 5vw, 52px);
+    line-height: 1.05;
+}
+
+.intro {
+    max-width: 760px;
+    margin: 0;
+    color: var(--muted);
+    line-height: 1.8;
+}
+
+.panel {
+    background: var(--panel);
+    border: 1px solid rgba(217, 207, 192, 0.8);
+    border-radius: 24px;
+    padding: 28px;
+    box-shadow: 0 20px 40px rgba(79, 55, 27, 0.08);
+}
+
+.panel-header h2 {
+    margin: 0 0 8px;
+}
+
+.panel-header p {
+    margin: 0 0 20px;
+    color: var(--muted);
+}
+
+.chat-form {
+    display: grid;
+    gap: 12px;
+}
+
+.chat-form label {
+    font-weight: 700;
+}
+
+.chat-form textarea {
+    width: 100%;
+    border: 1px solid var(--line);
+    border-radius: 16px;
+    padding: 16px;
+    font: inherit;
+    resize: vertical;
+    background: #fff;
+}
+
+.chat-form button {
+    width: 140px;
+    border: none;
+    border-radius: 999px;
+    padding: 12px 18px;
+    font: inherit;
+    font-weight: 700;
+    color: #fff;
+    background: linear-gradient(135deg, var(--accent), var(--accent-dark));
+    cursor: pointer;
+}
