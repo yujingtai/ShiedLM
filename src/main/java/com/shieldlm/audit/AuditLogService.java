@@ -1,6 +1,8 @@
 package com.shieldlm.audit;
 
 import com.shieldlm.core.ShieldResponse;
+import com.shieldlm.core.model.DefenseAction;
+import com.shieldlm.core.model.RiskLevel;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
@@ -40,5 +42,12 @@ public class AuditLogService {
 
     public List<AuditRecord> findRecent() {
         return auditRecordRepository.findAll(Sort.by(Sort.Direction.DESC, "createdAt"));
+    }
+
+    public List<AuditRecord> findRecent(RiskLevel riskLevel, DefenseAction defenseAction) {
+        return findRecent().stream()
+                .filter(record -> riskLevel == null || record.getRiskLevel() == riskLevel)
+                .filter(record -> defenseAction == null || record.getDefenseAction() == defenseAction)
+                .toList();
     }
 }

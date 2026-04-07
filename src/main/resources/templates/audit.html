@@ -26,6 +26,59 @@
             <p>这里展示每次输入触发的风险等级、防御动作和最终输出，用于回溯模型防护过程。</p>
         </div>
 
+        <form class="filter-form" th:action="@{/audit}" method="get">
+            <div class="filter-field">
+                <label for="riskLevel">风险等级</label>
+                <select id="riskLevel" name="riskLevel">
+                    <option value="">全部</option>
+                    <option th:each="risk : ${riskLevels}"
+                            th:value="${risk.name()}"
+                            th:text="${risk.name()}"
+                            th:selected="${selectedRiskLevel == risk}">
+                        HIGH
+                    </option>
+                </select>
+            </div>
+            <div class="filter-field">
+                <label for="defenseAction">防御动作</label>
+                <select id="defenseAction" name="defenseAction">
+                    <option value="">全部</option>
+                    <option th:each="action : ${defenseActions}"
+                            th:value="${action.name()}"
+                            th:text="${action.name()}"
+                            th:selected="${selectedDefenseAction == action}">
+                        BLOCK
+                    </option>
+                </select>
+            </div>
+            <div class="filter-actions">
+                <button type="submit">应用筛选</button>
+                <a th:href="@{/audit}">重置</a>
+            </div>
+        </form>
+
+        <section class="result-panel audit-summary-panel">
+            <div class="result-header">
+                <h3>筛选条件</h3>
+                <span class="summary-note" th:text="${'当前展示 ' + displayedCount + ' 条记录'}">当前展示 0 条记录</span>
+            </div>
+
+            <div class="metric-grid">
+                <article class="metric-card">
+                    <span class="metric-label">展示记录数</span>
+                    <strong th:text="${displayedCount}">0</strong>
+                </article>
+                <article class="metric-card">
+                    <span class="metric-label">输入拦截数</span>
+                    <strong th:text="${blockedCount}">0</strong>
+                </article>
+                <article class="metric-card">
+                    <span class="metric-label">输出拦截数</span>
+                    <strong th:text="${outputBlockedCount}">0</strong>
+                </article>
+            </div>
+        </section>
+
         <div class="table-shell" th:if="${!#lists.isEmpty(records)}">
             <table class="audit-table">
                 <thead>
@@ -57,7 +110,7 @@
             </table>
         </div>
 
-        <p class="empty-hint" th:if="${#lists.isEmpty(records)}">当前还没有审计记录，先去聊天页发起一次请求吧。</p>
+        <p class="empty-hint" th:if="${#lists.isEmpty(records)}">当前筛选条件下暂无审计记录。</p>
     </section>
 </main>
 </body>
