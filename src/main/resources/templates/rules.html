@@ -23,7 +23,7 @@
     <section class="panel">
         <div class="panel-header">
             <h2>基础运行指标</h2>
-            <p>这些指标用于说明防护框架在演示期间识别了多少风险请求，以及系统拦截了多少输入或输出。</p>
+            <p>这些指标用于观察当前演示数据下的风险请求规模，以及输入拦截和输出拦截的执行情况。</p>
         </div>
 
         <div class="metric-grid">
@@ -48,8 +48,55 @@
 
     <section class="panel split-panel">
         <div class="panel-header">
+            <h2>攻击类型分布</h2>
+            <p>基于审计日志中的攻击标签，统计近期更常见的提示注入攻击类型。</p>
+        </div>
+
+        <div class="stats-list" th:if="${!#lists.isEmpty(stats.attackTypeStats)}">
+            <article class="stats-item" th:each="item : ${stats.attackTypeStats}">
+                <div>
+                    <strong th:text="${item.attackType}">PROMPT_EXTRACTION</strong>
+                    <p>来自审计记录中的攻击类型标签</p>
+                </div>
+                <span th:text="${item.hitCount + ' 次'}">0 次</span>
+            </article>
+        </div>
+        <p class="empty-hint" th:if="${#lists.isEmpty(stats.attackTypeStats)}">暂无可统计的攻击类型数据。</p>
+    </section>
+
+    <section class="panel split-panel">
+        <div class="panel-header">
+            <h2>规则命中排行</h2>
+            <p>按规则所属攻击类型的近期出现频次排序，用于观察哪些规则对应的风险更活跃。</p>
+        </div>
+
+        <div class="table-shell">
+            <table class="audit-table">
+                <thead>
+                <tr>
+                    <th>规则键</th>
+                    <th>攻击类型</th>
+                    <th>命中次数</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr th:if="${#lists.isEmpty(stats.ruleHitStats)}">
+                    <td colspan="3">暂无可展示的规则命中数据。</td>
+                </tr>
+                <tr th:each="item : ${stats.ruleHitStats}">
+                    <td th:text="${item.ruleKey}">SYSTEM_PROMPT_LEAK</td>
+                    <td th:text="${item.attackType}">PROMPT_EXTRACTION</td>
+                    <td th:text="${item.hitCount}">3</td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+    </section>
+
+    <section class="panel split-panel">
+        <div class="panel-header">
             <h2>当前防护规则</h2>
-            <p>这里展示当前启用的提示注入检测规则，用于说明系统的风险识别依据。</p>
+            <p>这里展示当前启用的提示注入检测规则，便于对照系统的识别依据和风险分值。</p>
         </div>
 
         <div class="table-shell">
@@ -67,7 +114,7 @@
                     <td th:text="${rule.key}">SYSTEM_PROMPT_LEAK</td>
                     <td th:text="${rule.attackType}">PROMPT_EXTRACTION</td>
                     <td th:text="${rule.score}">40</td>
-                    <td th:text="${rule.patterns}">系统提示词、system prompt</td>
+                    <td th:text="${rule.patterns}">system prompt</td>
                 </tr>
                 </tbody>
             </table>
