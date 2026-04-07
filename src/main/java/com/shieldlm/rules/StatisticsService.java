@@ -15,7 +15,7 @@ public class StatisticsService {
     }
 
     /**
-     * 统计页只展示最核心的几个指标，保证答辩时一眼能讲清楚：
+     * 统计页只保留最核心的几个指标：
      * 总请求量、高风险量、输入被拦截量、输出被拦截量。
      */
     public StatisticsSummary getSummary() {

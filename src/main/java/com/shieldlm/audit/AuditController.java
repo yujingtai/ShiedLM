@@ -15,7 +15,7 @@ public class AuditController {
 
     @GetMapping("/audit")
     public String audit(Model model) {
-        // 审计页直接读取最近记录，便于答辩时展示系统已经完成留痕。
+        // 审计页直接读取最近记录，用于展示系统留痕结果。
         model.addAttribute("records", auditLogService.findRecent());
         return "audit";
     }
