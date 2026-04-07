@@ -72,6 +72,10 @@ body {
     margin-top: 24px;
 }
 
+.sample-panel {
+    margin-bottom: 24px;
+}
+
 .panel-header h2 {
     margin: 0 0 8px;
 }
@@ -116,6 +120,78 @@ body {
 .chat-form button:hover {
     transform: translateY(-1px);
     box-shadow: 0 12px 24px rgba(124, 45, 18, 0.18);
+}
+
+.sample-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    gap: 16px;
+}
+
+.sample-card {
+    display: grid;
+    gap: 14px;
+    padding: 18px;
+    border: 1px solid rgba(217, 207, 192, 0.9);
+    border-radius: 20px;
+    background: linear-gradient(180deg, rgba(255, 255, 255, 0.92), rgba(248, 243, 234, 0.96));
+}
+
+.sample-card-header {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 12px;
+}
+
+.sample-card h3 {
+    margin: 0 0 6px;
+    font-size: 18px;
+}
+
+.sample-meta,
+.sample-summary {
+    margin: 0;
+    color: var(--muted);
+    line-height: 1.7;
+}
+
+.sample-meta {
+    font-size: 13px;
+    font-weight: 700;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+}
+
+.sample-footer {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+}
+
+.sample-action {
+    color: var(--accent-dark);
+    font-size: 13px;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+}
+
+.sample-use {
+    border: 1px solid rgba(180, 83, 9, 0.18);
+    border-radius: 999px;
+    padding: 10px 14px;
+    font: inherit;
+    font-weight: 700;
+    color: var(--accent-dark);
+    background: rgba(180, 83, 9, 0.08);
+    cursor: pointer;
+    transition: background 160ms ease, transform 160ms ease;
+}
+
+.sample-use:hover {
+    background: rgba(180, 83, 9, 0.14);
+    transform: translateY(-1px);
 }
 
 .result-panel {
@@ -269,6 +345,10 @@ body {
     font-weight: 700;
 }
 
+.detail-table {
+    margin-top: 12px;
+}
+
 @media (max-width: 720px) {
     .layout {
         width: min(100% - 20px, 1040px);
@@ -292,5 +372,10 @@ body {
 
     .chat-form button {
         width: 100%;
+    }
+
+    .sample-footer {
+        align-items: flex-start;
+        flex-direction: column;
     }
 }

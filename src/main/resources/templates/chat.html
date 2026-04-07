@@ -27,6 +27,30 @@
         </p>
     </section>
 
+    <section class="panel sample-panel">
+        <div class="panel-header">
+            <h2>推荐演示样例</h2>
+            <p>这里预置了正常请求、规则绕过、混合型攻击和输出泄露兜底四类场景，可直接填充到输入框中进行演示。</p>
+        </div>
+
+        <div class="sample-grid">
+            <article class="sample-card" th:each="scenario : ${demoScenarios}">
+                <div class="sample-card-header">
+                    <div>
+                        <h3 th:text="${scenario.title}">混合型注入攻击</h3>
+                        <p class="sample-meta" th:text="${scenario.category}">Hybrid Injection</p>
+                    </div>
+                    <span class="tag" th:text="${scenario.expectedRisk}">HIGH</span>
+                </div>
+                <p class="sample-summary" th:text="${scenario.summary}">组合系统提示词探测和内部配置诱导，验证高风险拦截。</p>
+                <div class="sample-footer">
+                    <span class="sample-action" th:text="${scenario.expectedAction}">BLOCK</span>
+                    <button class="sample-use" type="button" th:attr="data-prompt=${scenario.prompt}">填充样例</button>
+                </div>
+            </article>
+        </div>
+    </section>
+
     <section class="panel">
         <div class="panel-header">
             <h2>安全聊天</h2>
@@ -71,6 +95,34 @@
                     <span class="tag" th:each="hit : ${response.decision.hits}" th:text="${hit.ruleKey}">RULE</span>
                 </div>
                 <p class="empty-hint" th:if="${#lists.isEmpty(response.decision.hits)}">未命中风险规则。</p>
+            </div>
+
+            <div class="result-block">
+                <h4>处理后提示词</h4>
+                <pre th:text="${response.decision.processedPrompt}">processed prompt</pre>
+            </div>
+
+            <div class="result-block">
+                <h4>规则命中明细</h4>
+                <div class="table-shell" th:if="${!#lists.isEmpty(response.decision.hits)}">
+                    <table class="audit-table detail-table">
+                        <thead>
+                        <tr>
+                            <th>规则键</th>
+                            <th>攻击类型</th>
+                            <th>分值</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        <tr th:each="hit : ${response.decision.hits}">
+                            <td th:text="${hit.ruleKey}">SYSTEM_PROMPT_LEAK</td>
+                            <td th:text="${hit.attackType}">PROMPT_EXTRACTION</td>
+                            <td th:text="${hit.score}">40</td>
+                        </tr>
+                        </tbody>
+                    </table>
+                </div>
+                <p class="empty-hint" th:if="${#lists.isEmpty(response.decision.hits)}">当前请求未触发风险明细。</p>
             </div>
 
             <div class="result-block">

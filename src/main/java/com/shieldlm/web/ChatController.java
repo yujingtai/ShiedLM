@@ -10,20 +10,32 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
 
+import java.util.List;
+
 @Controller
 public class ChatController {
 
     private final ShieldPipelineService shieldPipelineService;
     private final AuditLogService auditLogService;
+    private final DemoScenarioService demoScenarioService;
 
-    public ChatController(ShieldPipelineService shieldPipelineService, AuditLogService auditLogService) {
+    public ChatController(
+            ShieldPipelineService shieldPipelineService,
+            AuditLogService auditLogService,
+            DemoScenarioService demoScenarioService
+    ) {
         this.shieldPipelineService = shieldPipelineService;
         this.auditLogService = auditLogService;
+        this.demoScenarioService = demoScenarioService;
+    }
+
+    @ModelAttribute("demoScenarios")
+    public List<DemoScenario> demoScenarios() {
+        return demoScenarioService.listScenarios();
     }
 
     @GetMapping("/")
     public String chat(Model model) {
-        // chatForm 是页面表单绑定对象，负责把文本域中的用户输入提交到后端。
         model.addAttribute("chatForm", new ChatForm());
         return "chat";
     }
