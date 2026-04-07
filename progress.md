@@ -64,3 +64,24 @@
 | What's the goal? | 完成一个可运行、可演示、可支撑论文讲解的 ShieldLM MVP |
 | What have I learned? | 现有 MVP 前台已形成聊天页、审计页、规则统计页三件套 |
 | What have I done? | 已完成主链路、演示页、审计页、规则统计页与项目级进度记录 |
+## Session: 2026-04-07
+
+### Phase 5.1: 文档与演示闭环
+- **Status:** complete
+- Actions taken:
+  - 重写 `README.md`，补齐运行说明、页面入口、项目结构和能力边界
+  - 新增 `docs/demo-scenarios.md`，整理 4 个可稳定复现的演示样例
+  - 新增 `docs/demo-script.md`，整理演示顺序与讲解重点
+  - 新增 `docs/commit-playbook.md`，统一提交粒度与提交信息约定
+  - 新增 `docs/plans/2026-04-07-documentation-closeout.md`，记录本批次执行计划
+- Files created/modified:
+  - `README.md` (updated)
+  - `docs/demo-scenarios.md` (created)
+  - `docs/demo-script.md` (created)
+  - `docs/commit-playbook.md` (created)
+  - `docs/plans/2026-04-07-documentation-closeout.md` (created)
+- Verification:
+  - `rg -n "## 项目目标|## 快速启动|## 演示入口|## 已实现与未实现边界" README.md`
+  - `rg -n "样例 1|样例 2|演示主线|演示前检查" docs/demo-scenarios.md docs/demo-script.md`
+  - `rg -n "提交原则|推荐流程" docs/commit-playbook.md`
+  - `mvn test` -> Tests run: 11, Failures: 0, Errors: 0, Skipped: 0

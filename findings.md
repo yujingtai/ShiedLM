@@ -39,3 +39,8 @@
 ## Visual/Browser Findings
 - `planning-with-files` 仓库支持 Codex，并强调用 `task_plan.md`、`findings.md`、`progress.md` 做持久化计划与恢复。
 - 该 skill 更适合作为“辅助记忆层”，不取代项目中已有的正式设计文档和实现计划。
+## 2026-04-07 Documentation Findings
+- 当前代码主链路已经可运行，当前缺口主要集中在交付文档与演示材料。
+- README 之前内容过少，不足以支撑独立启动和复现。
+- 当前最适合固定的演示顺序是：正常请求 -> 中风险改写 -> 高风险拦截 -> 输出兜底。
+- 本批次优先补文档，不改业务代码，可以较低风险提升项目完整度。
