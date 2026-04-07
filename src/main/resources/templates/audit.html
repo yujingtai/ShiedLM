@@ -23,10 +23,18 @@
     <section class="panel">
         <div class="panel-header">
             <h2>最近请求记录</h2>
-            <p>这里展示每次输入触发的风险等级、防御动作和最终输出，用于回溯模型防护过程。</p>
+            <p>这里展示每次输入触发的风险等级、防御动作和最终输出，用于回溯防护链路。</p>
         </div>
 
         <form class="filter-form" th:action="@{/audit}" method="get">
+            <div class="filter-field filter-field-wide">
+                <label for="keyword">关键词检索</label>
+                <input id="keyword"
+                       name="keyword"
+                       type="text"
+                       th:value="${keyword}"
+                       placeholder="搜索提示词、攻击类型或最终回复">
+            </div>
             <div class="filter-field">
                 <label for="riskLevel">风险等级</label>
                 <select id="riskLevel" name="riskLevel">
@@ -59,21 +67,24 @@
 
         <section class="result-panel audit-summary-panel">
             <div class="result-header">
-                <h3>筛选条件</h3>
-                <span class="summary-note" th:text="${'当前展示 ' + displayedCount + ' 条记录'}">当前展示 0 条记录</span>
+                <h3>筛选结果</h3>
+                <span class="summary-note"
+                      th:text="${totalPages == 0 ? '当前没有匹配记录' : '共匹配 ' + totalMatches + ' 条，当前第 ' + pageNumberDisplay + ' / ' + totalPages + ' 页'}">
+                    共匹配 0 条，当前第 0 / 0 页
+                </span>
             </div>
 
             <div class="metric-grid">
                 <article class="metric-card">
-                    <span class="metric-label">展示记录数</span>
+                    <span class="metric-label">匹配记录数</span>
                     <strong th:text="${displayedCount}">0</strong>
                 </article>
                 <article class="metric-card">
-                    <span class="metric-label">输入拦截数</span>
+                    <span class="metric-label">当前页输入拦截数</span>
                     <strong th:text="${blockedCount}">0</strong>
                 </article>
                 <article class="metric-card">
-                    <span class="metric-label">输出拦截数</span>
+                    <span class="metric-label">当前页输出拦截数</span>
                     <strong th:text="${outputBlockedCount}">0</strong>
                 </article>
             </div>
@@ -104,11 +115,27 @@
                         </span>
                     </td>
                     <td th:text="${record.defenseAction}">BLOCK</td>
-                    <td th:text="${record.finalReply}">请求存在高风险，已被系统拦截。</td>
+                    <td th:text="${record.finalReply}">request blocked</td>
                 </tr>
                 </tbody>
             </table>
         </div>
+
+        <nav class="pagination-bar" th:if="${totalPages > 1}">
+            <a th:if="${hasPrevious}"
+               th:href="@{/audit(page=${pageNumber - 1}, keyword=${keyword}, riskLevel=${selectedRiskLevel}, defenseAction=${selectedDefenseAction})}">
+                上一页
+            </a>
+            <span th:if="${!hasPrevious}" class="pagination-link is-disabled">上一页</span>
+            <span class="pagination-status" th:text="${'第 ' + pageNumberDisplay + ' / ' + totalPages + ' 页'}">
+                第 1 / 1 页
+            </span>
+            <a th:if="${hasNext}"
+               th:href="@{/audit(page=${pageNumber + 1}, keyword=${keyword}, riskLevel=${selectedRiskLevel}, defenseAction=${selectedDefenseAction})}">
+                下一页
+            </a>
+            <span th:if="${!hasNext}" class="pagination-link is-disabled">下一页</span>
+        </nav>
 
         <p class="empty-hint" th:if="${#lists.isEmpty(records)}">当前筛选条件下暂无审计记录。</p>
     </section>

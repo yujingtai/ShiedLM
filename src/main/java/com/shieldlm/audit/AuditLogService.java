@@ -3,15 +3,19 @@ package com.shieldlm.audit;
 import com.shieldlm.core.ShieldResponse;
 import com.shieldlm.core.model.DefenseAction;
 import com.shieldlm.core.model.RiskLevel;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
-import java.util.List;
 import java.util.stream.Collectors;
 
 @Service
 public class AuditLogService {
+
+    private static final int PAGE_SIZE = 5;
 
     private final AuditRecordRepository auditRecordRepository;
 
@@ -20,7 +24,7 @@ public class AuditLogService {
     }
 
     /**
-     * 把一次对话的判定结果写入审计表，后续审计页和统计页都会复用这些数据。
+     * 保存一次请求对应的审计结果，供审计页和统计页复用。
      */
     public void save(ShieldResponse response) {
         String attackTypes = response.decision().hits().stream()
@@ -40,14 +44,21 @@ public class AuditLogService {
         auditRecordRepository.save(record);
     }
 
-    public List<AuditRecord> findRecent() {
-        return auditRecordRepository.findAll(Sort.by(Sort.Direction.DESC, "createdAt"));
+    public Page<AuditRecord> findRecent(String keyword, RiskLevel riskLevel, DefenseAction defenseAction, int page) {
+        String normalizedKeyword = normalizeKeyword(keyword);
+        Pageable pageable = PageRequest.of(
+                Math.max(page, 0),
+                PAGE_SIZE,
+                Sort.by(Sort.Direction.DESC, "createdAt")
+        );
+        return auditRecordRepository.search(normalizedKeyword, riskLevel, defenseAction, pageable);
     }
 
-    public List<AuditRecord> findRecent(RiskLevel riskLevel, DefenseAction defenseAction) {
-        return findRecent().stream()
-                .filter(record -> riskLevel == null || record.getRiskLevel() == riskLevel)
-                .filter(record -> defenseAction == null || record.getDefenseAction() == defenseAction)
-                .toList();
+    private String normalizeKeyword(String keyword) {
+        if (keyword == null) {
+            return null;
+        }
+        String trimmed = keyword.trim();
+        return trimmed.isEmpty() ? null : trimmed;
     }
 }

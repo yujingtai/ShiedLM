@@ -85,3 +85,24 @@
   - `rg -n "样例 1|样例 2|演示主线|演示前检查" docs/demo-scenarios.md docs/demo-script.md`
   - `rg -n "提交原则|推荐流程" docs/commit-playbook.md`
   - `mvn test` -> Tests run: 11, Failures: 0, Errors: 0, Skipped: 0
+
+### Phase 5.2: 审计检索与分页设计
+- **Status:** complete
+- Actions taken:
+  - 梳理 `AuditController`、`AuditLogService`、`AuditRecordRepository` 和 `audit.html` 的现状
+  - 确认当前审计页已具备筛选能力，但仍缺关键词搜索与分页
+  - 形成“数据库查询分页 + 关键词搜索”的增强方案
+  - 按 TDD 先扩展 `AuditControllerTests`，再补 repository、service、controller 和审计页模板
+  - 审计页新增关键词检索框、分页导航和结果摘要提示
+- Files created/modified:
+  - `docs/specs/2026-04-07-audit-search-pagination-design.md` (created)
+  - `docs/plans/2026-04-07-audit-search-pagination-implementation.md` (created)
+  - `src/main/java/com/shieldlm/audit/AuditController.java` (updated)
+  - `src/main/java/com/shieldlm/audit/AuditLogService.java` (updated)
+  - `src/main/java/com/shieldlm/audit/AuditRecordRepository.java` (updated)
+  - `src/main/resources/templates/audit.html` (updated)
+  - `src/main/resources/static/css/app.css` (updated)
+  - `src/test/java/com/shieldlm/audit/AuditControllerTests.java` (updated)
+- Verification:
+  - `mvn -Dmaven.repo.local=C:\Users\wjh\.m2\repository -Dtest=AuditControllerTests test` -> Tests run: 3, Failures: 0, Errors: 0, Skipped: 0
+  - `mvn -Dmaven.repo.local=C:\Users\wjh\.m2\repository test` -> Tests run: 12, Failures: 0, Errors: 0, Skipped: 0

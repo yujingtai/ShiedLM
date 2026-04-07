@@ -138,6 +138,7 @@ body {
     font-weight: 700;
 }
 
+.filter-field input,
 .filter-field select {
     width: 100%;
     border: 1px solid var(--line);
@@ -145,6 +146,10 @@ body {
     padding: 12px 14px;
     font: inherit;
     background: #fff;
+}
+
+.filter-field-wide {
+    grid-column: span 2;
 }
 
 .filter-actions {
@@ -417,6 +422,42 @@ body {
     font-weight: 700;
 }
 
+.pagination-bar {
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    gap: 12px;
+    margin-top: 18px;
+}
+
+.pagination-bar a,
+.pagination-link {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 40px;
+    padding: 0 14px;
+    border-radius: 999px;
+    border: 1px solid rgba(217, 207, 192, 0.9);
+    background: rgba(255, 255, 255, 0.72);
+    color: var(--accent-dark);
+    font-size: 14px;
+    font-weight: 700;
+    text-decoration: none;
+}
+
+.pagination-link.is-disabled {
+    color: var(--muted);
+    cursor: default;
+    background: rgba(240, 235, 226, 0.8);
+}
+
+.pagination-status {
+    color: var(--muted);
+    font-size: 14px;
+    font-weight: 700;
+}
+
 @media (max-width: 720px) {
     .layout {
         width: min(100% - 20px, 1040px);
@@ -448,6 +489,15 @@ body {
     }
 
     .filter-actions {
+        align-items: stretch;
+        flex-direction: column;
+    }
+
+    .filter-field-wide {
+        grid-column: span 1;
+    }
+
+    .pagination-bar {
         align-items: stretch;
         flex-direction: column;
     }
