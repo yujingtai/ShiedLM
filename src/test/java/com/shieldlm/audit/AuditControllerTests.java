@@ -6,6 +6,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.context.annotation.Import;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
@@ -14,6 +15,7 @@ import org.springframework.test.web.servlet.MockMvc;
 import java.time.LocalDateTime;
 import java.util.List;
 
+import static org.hamcrest.Matchers.containsString;
 import static org.hamcrest.Matchers.hasSize;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -24,6 +26,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.view;
 
 @WebMvcTest(AuditController.class)
+@Import(com.shieldlm.web.ViewTextHelper.class)
 class AuditControllerTests {
 
     @Autowired
@@ -39,9 +42,11 @@ class AuditControllerTests {
                         LocalDateTime.of(2026, 4, 6, 20, 30),
                         "attack prompt",
                         "PRIVILEGE_OVERRIDE, PROMPT_EXTRACTION",
+                        "OVERRIDE_INTENT, PROMPT_LEAK_INTENT",
                         RiskLevel.HIGH,
                         DefenseAction.BLOCK,
                         false,
+                        "NONE",
                         "request blocked"
                 )
         );
@@ -61,7 +66,13 @@ class AuditControllerTests {
                 .andExpect(model().attribute("totalPages", 1))
                 .andExpect(model().attribute("blockedCount", 1L))
                 .andExpect(model().attribute("outputBlockedCount", 0L))
-                .andExpect(content().string(org.hamcrest.Matchers.containsString("Audit")));
+                .andExpect(content().string(containsString("风险摘要")))
+                .andExpect(content().string(containsString("处置结果")))
+                .andExpect(content().string(containsString("查看详情")))
+                .andExpect(content().string(containsString("audit-detail-dialog")))
+                .andExpect(content().string(containsString("越权覆盖")))
+                .andExpect(content().string(containsString("高风险")))
+                .andExpect(content().string(containsString("输入拦截")));
     }
 
     @Test
@@ -71,9 +82,11 @@ class AuditControllerTests {
                         LocalDateTime.of(2026, 4, 6, 20, 30),
                         "attack prompt",
                         "PROMPT_EXTRACTION",
+                        "PROMPT_LEAK_INTENT",
                         RiskLevel.HIGH,
                         DefenseAction.BLOCK,
                         false,
+                        "NONE",
                         "blocked"
                 )
         );
@@ -100,9 +113,11 @@ class AuditControllerTests {
                 LocalDateTime.of(2026, 4, 6, 20, 30),
                 "prompt attack",
                 "PROMPT_EXTRACTION",
+                "PROMPT_LEAK_INTENT",
                 RiskLevel.HIGH,
                 DefenseAction.BLOCK,
                 false,
+                "NONE",
                 "blocked"
         );
         Page<AuditRecord> recordPage = new PageImpl<>(List.of(record), PageRequest.of(1, 5), 8);

@@ -5,6 +5,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.context.annotation.Import;
 import org.springframework.test.web.servlet.MockMvc;
 
 import java.util.List;
@@ -18,6 +19,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.view;
 
 @WebMvcTest(RulesController.class)
+@Import(com.shieldlm.web.ViewTextHelper.class)
 class RulesControllerTests {
 
     @Autowired
@@ -32,7 +34,7 @@ class RulesControllerTests {
     @Test
     void rendersRulesPageWithRulesAndStats() throws Exception {
         List<RuleView> rules = List.of(
-                new RuleView("SYSTEM_PROMPT_LEAK", AttackType.PROMPT_EXTRACTION, 40, "system prompt")
+                new RuleView("SYSTEM_PROMPT_LEAK", AttackType.PROMPT_EXTRACTION, 40, "system prompt", List.of("PROMPT_LEAK_INTENT"))
         );
         StatisticsSummary stats = new StatisticsSummary(
                 5,
@@ -54,6 +56,9 @@ class RulesControllerTests {
                 .andExpect(content().string(containsString("攻击类型分布")))
                 .andExpect(content().string(containsString("规则命中排行")))
                 .andExpect(content().string(containsString("命中次数")))
-                .andExpect(content().string(containsString("3 次")));
+                .andExpect(content().string(containsString("3 次")))
+                .andExpect(content().string(containsString("提示词窃取")))
+                .andExpect(content().string(containsString("提示词窃取检测")))
+                .andExpect(content().string(containsString("提示词泄露意图")));
     }
 }

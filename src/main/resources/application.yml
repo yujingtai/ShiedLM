@@ -15,4 +15,8 @@ server:
   port: 8080
 shieldlm:
   model:
-    mode: mock
+    mode: ${SHIELDLM_MODEL_MODE:api}
+    base-url: ${SHIELDLM_BASE_URL:https://api.deepseek.com}
+    model-name: ${SHIELDLM_MODEL_NAME:deepseek-chat}
+    api-key: ${SHIELDLM_API_KEY:}
+    chat-path: ${SHIELDLM_CHAT_PATH:/chat/completions}

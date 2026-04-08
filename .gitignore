@@ -3,5 +3,7 @@ target/
 .vscode/
 .DS_Store
 *.iml
+*.log
 data/
 .superpowers/
+docs/session-sync/

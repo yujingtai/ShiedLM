@@ -2,6 +2,7 @@ package com.shieldlm.audit;
 
 import com.shieldlm.core.model.DefenseAction;
 import com.shieldlm.core.model.RiskLevel;
+import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
@@ -19,8 +20,15 @@ public class AuditRecord {
     private Long id;
 
     private LocalDateTime createdAt;
+
+    @Column(length = 4000)
     private String userPrompt;
+
+    @Column(length = 4000)
     private String attackTypes;
+
+    @Column(length = 4000)
+    private String riskSignals;
 
     @Enumerated(EnumType.STRING)
     private RiskLevel riskLevel;
@@ -29,6 +37,11 @@ public class AuditRecord {
     private DefenseAction defenseAction;
 
     private boolean outputBlocked;
+
+    @Column(length = 100)
+    private String outputRiskType;
+
+    @Column(length = 4000)
     private String finalReply;
 
     protected AuditRecord() {
@@ -38,17 +51,21 @@ public class AuditRecord {
             LocalDateTime createdAt,
             String userPrompt,
             String attackTypes,
+            String riskSignals,
             RiskLevel riskLevel,
             DefenseAction defenseAction,
             boolean outputBlocked,
+            String outputRiskType,
             String finalReply
     ) {
         this.createdAt = createdAt;
         this.userPrompt = userPrompt;
         this.attackTypes = attackTypes;
+        this.riskSignals = riskSignals;
         this.riskLevel = riskLevel;
         this.defenseAction = defenseAction;
         this.outputBlocked = outputBlocked;
+        this.outputRiskType = outputRiskType;
         this.finalReply = finalReply;
     }
 
@@ -68,6 +85,10 @@ public class AuditRecord {
         return attackTypes;
     }
 
+    public String getRiskSignals() {
+        return riskSignals;
+    }
+
     public RiskLevel getRiskLevel() {
         return riskLevel;
     }
@@ -78,6 +99,10 @@ public class AuditRecord {
 
     public boolean isOutputBlocked() {
         return outputBlocked;
+    }
+
+    public String getOutputRiskType() {
+        return outputRiskType;
     }
 
     public String getFinalReply() {

@@ -23,12 +23,14 @@ public class AuditLogService {
         this.auditRecordRepository = auditRecordRepository;
     }
 
-    /**
-     * 保存一次请求对应的审计结果，供审计页和统计页复用。
-     */
     public void save(ShieldResponse response) {
         String attackTypes = response.decision().hits().stream()
                 .map(hit -> hit.attackType().name())
+                .distinct()
+                .collect(Collectors.joining(", "));
+        String riskSignals = response.decision().hits().stream()
+                .flatMap(hit -> hit.signals().stream())
+                .map(Enum::name)
                 .distinct()
                 .collect(Collectors.joining(", "));
 
@@ -36,9 +38,11 @@ public class AuditLogService {
                 LocalDateTime.now(),
                 response.userPrompt(),
                 attackTypes,
+                riskSignals,
                 response.decision().riskLevel(),
                 response.decision().action(),
                 response.outputBlocked(),
+                response.outputRiskType().name(),
                 response.finalReply()
         );
         auditRecordRepository.save(record);

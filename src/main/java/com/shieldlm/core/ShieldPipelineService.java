@@ -6,41 +6,44 @@ import com.shieldlm.detection.InputDetectionService;
 import com.shieldlm.model.ModelClient;
 import com.shieldlm.output.GuardedOutput;
 import com.shieldlm.output.OutputGuardService;
+import com.shieldlm.output.ReplyTextFormatter;
 
 public class ShieldPipelineService {
 
     private final InputDetectionService inputDetectionService;
     private final ModelClient modelClient;
     private final OutputGuardService outputGuardService;
+    private final ReplyTextFormatter replyTextFormatter;
 
     public ShieldPipelineService(
             InputDetectionService inputDetectionService,
             ModelClient modelClient,
-            OutputGuardService outputGuardService
+            OutputGuardService outputGuardService,
+            ReplyTextFormatter replyTextFormatter
     ) {
         this.inputDetectionService = inputDetectionService;
         this.modelClient = modelClient;
         this.outputGuardService = outputGuardService;
+        this.replyTextFormatter = replyTextFormatter;
     }
 
     public ShieldResponse handle(String userPrompt) {
-        // 第一步先分析用户输入，判断是否存在提示注入风险。
         ShieldDecision decision = inputDetectionService.analyze(userPrompt);
         if (decision.action() == DefenseAction.BLOCK) {
             return new ShieldResponse(userPrompt, decision, "", "请求存在高风险，已被系统拦截。", false);
         }
 
-        // 如果允许继续，就把策略处理后的提示词交给模型生成回复。
         String rawReply = modelClient.generateReply(decision.processedPrompt());
-
-        // 模型输出也要做二次检查，防止敏感信息在回复阶段泄漏。
         GuardedOutput guardedOutput = outputGuardService.guard(rawReply);
+        String displayRawReply = replyTextFormatter.format(rawReply);
+        String displayFinalReply = replyTextFormatter.format(guardedOutput.safeReply());
         return new ShieldResponse(
                 userPrompt,
                 decision,
-                rawReply,
-                guardedOutput.safeReply(),
-                guardedOutput.blocked()
+                displayRawReply,
+                displayFinalReply,
+                guardedOutput.blocked(),
+                guardedOutput.riskType()
         );
     }
 }

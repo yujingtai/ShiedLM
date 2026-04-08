@@ -55,7 +55,7 @@
         <div class="stats-list" th:if="${!#lists.isEmpty(stats.attackTypeStats)}">
             <article class="stats-item" th:each="item : ${stats.attackTypeStats}">
                 <div>
-                    <strong th:text="${item.attackType}">PROMPT_EXTRACTION</strong>
+                    <strong th:text="${@viewTexts.attackType(item.attackType)}">提示词窃取</strong>
                     <p>来自审计记录中的攻击类型标签</p>
                 </div>
                 <span th:text="${item.hitCount + ' 次'}">0 次</span>
@@ -84,8 +84,8 @@
                     <td colspan="3">暂无可展示的规则命中数据。</td>
                 </tr>
                 <tr th:each="item : ${stats.ruleHitStats}">
-                    <td th:text="${item.ruleKey}">SYSTEM_PROMPT_LEAK</td>
-                    <td th:text="${item.attackType}">PROMPT_EXTRACTION</td>
+                    <td th:text="${@viewTexts.ruleKey(item.ruleKey)}">系统提示词探测</td>
+                    <td th:text="${@viewTexts.attackType(item.attackType)}">提示词窃取</td>
                     <td th:text="${item.hitCount}">3</td>
                 </tr>
                 </tbody>
@@ -106,14 +106,22 @@
                     <th>规则键</th>
                     <th>攻击类型</th>
                     <th>风险分值</th>
+                    <th>风险信号</th>
                     <th>关键词/模式</th>
                 </tr>
                 </thead>
                 <tbody>
                 <tr th:each="rule : ${rules}">
-                    <td th:text="${rule.key}">SYSTEM_PROMPT_LEAK</td>
-                    <td th:text="${rule.attackType}">PROMPT_EXTRACTION</td>
+                    <td th:text="${@viewTexts.ruleKey(rule.key)}">系统提示词探测</td>
+                    <td th:text="${@viewTexts.attackType(rule.attackType)}">提示词窃取</td>
                     <td th:text="${rule.score}">40</td>
+                    <td>
+                        <div class="signal-list">
+                            <span class="signal-chip"
+                                  th:each="signal : ${rule.signals}"
+                                  th:text="${@viewTexts.riskSignal(signal)}">提示词泄露意图</span>
+                        </div>
+                    </td>
                     <td th:text="${rule.patterns}">system prompt</td>
                 </tr>
                 </tbody>

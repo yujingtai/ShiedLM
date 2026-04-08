@@ -29,8 +29,8 @@
 
     <section class="panel sample-panel">
         <div class="panel-header">
-            <h2>推荐演示样例</h2>
-            <p>这里预置了正常请求、规则绕过、混合型攻击和输出泄露兜底四类场景，可直接填充到输入框中进行演示。</p>
+            <h2>测试样例</h2>
+            <p>我把正常请求、规则绕过、混合型攻击和输出兜底整理成了几组样例，演示时可以直接填充到输入框，按顺序说明系统的识别和处置过程。</p>
         </div>
 
         <div class="sample-grid">
@@ -38,13 +38,13 @@
                 <div class="sample-card-header">
                     <div>
                         <h3 th:text="${scenario.title}">混合型注入攻击</h3>
-                        <p class="sample-meta" th:text="${scenario.category}">Hybrid Injection</p>
+                        <p class="sample-meta" th:text="${@viewTexts.scenarioCategory(scenario.category)}">混合攻击</p>
                     </div>
-                    <span class="tag" th:text="${scenario.expectedRisk}">HIGH</span>
+                    <span class="tag" th:text="${@viewTexts.riskLevel(scenario.expectedRisk)}">高风险</span>
                 </div>
-                <p class="sample-summary" th:text="${scenario.summary}">组合系统提示词探测和内部配置诱导，验证高风险拦截。</p>
+                <p class="sample-summary" th:text="${scenario.summary}">样例摘要</p>
                 <div class="sample-footer">
-                    <span class="sample-action" th:text="${scenario.expectedAction}">BLOCK</span>
+                    <span class="sample-action" th:text="${@viewTexts.defenseAction(scenario.expectedAction)}">输入拦截</span>
                     <button class="sample-use" type="button" th:attr="data-prompt=${scenario.prompt}">填充样例</button>
                 </div>
             </article>
@@ -64,20 +64,25 @@
             <button type="submit">发送并检测</button>
         </form>
 
+        <section class="feedback-banner error-banner" th:if="${errorMessage}">
+            <h3>本轮调用未完成</h3>
+            <p th:text="${errorMessage}">模型调用失败，状态码: 401</p>
+        </section>
+
         <section class="result-panel" th:if="${submitted}">
             <div class="result-header">
                 <h3>本轮防护结果</h3>
                 <span class="risk-badge"
-                      th:text="${response.decision.riskLevel}"
+                      th:text="${@viewTexts.riskLevel(response.decision.riskLevel)}"
                       th:classappend="${' risk-' + #strings.toLowerCase(response.decision.riskLevel.name())}">
-                    LOW
+                    低风险
                 </span>
             </div>
 
             <div class="metric-grid">
                 <article class="metric-card">
                     <span class="metric-label">防御动作</span>
-                    <strong th:text="${response.decision.action}">ALLOW</strong>
+                    <strong th:text="${@viewTexts.defenseAction(response.decision.action)}">直接放行</strong>
                 </article>
                 <article class="metric-card">
                     <span class="metric-label">风险分数</span>
@@ -92,7 +97,9 @@
             <div class="result-block">
                 <h4>命中规则</h4>
                 <div class="tag-list" th:if="${!#lists.isEmpty(response.decision.hits)}">
-                    <span class="tag" th:each="hit : ${response.decision.hits}" th:text="${hit.ruleKey}">RULE</span>
+                    <span class="tag"
+                          th:each="hit : ${response.decision.hits}"
+                          th:text="${@viewTexts.ruleKey(hit.ruleKey)}">规则标签</span>
                 </div>
                 <p class="empty-hint" th:if="${#lists.isEmpty(response.decision.hits)}">未命中风险规则。</p>
             </div>
@@ -110,14 +117,22 @@
                         <tr>
                             <th>规则键</th>
                             <th>攻击类型</th>
+                            <th>风险信号</th>
                             <th>分值</th>
                         </tr>
                         </thead>
                         <tbody>
                         <tr th:each="hit : ${response.decision.hits}">
-                            <td th:text="${hit.ruleKey}">SYSTEM_PROMPT_LEAK</td>
-                            <td th:text="${hit.attackType}">PROMPT_EXTRACTION</td>
-                            <td th:text="${hit.score}">40</td>
+                            <td th:text="${@viewTexts.ruleKey(hit.ruleKey)}">提示词窃取探测</td>
+                            <td th:text="${@viewTexts.attackType(hit.attackType)}">提示词窃取</td>
+                            <td>
+                                <div class="signal-list">
+                                    <span class="signal-chip"
+                                          th:each="signal : ${hit.signals}"
+                                          th:text="${@viewTexts.riskSignal(signal)}">提示词泄露意图</span>
+                                </div>
+                            </td>
+                            <td th:text="${hit.score}">35</td>
                         </tr>
                         </tbody>
                     </table>

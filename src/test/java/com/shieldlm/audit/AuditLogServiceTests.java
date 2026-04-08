@@ -6,6 +6,8 @@ import com.shieldlm.core.model.DefenseAction;
 import com.shieldlm.core.model.DetectionHit;
 import com.shieldlm.core.model.RiskLevel;
 import com.shieldlm.core.model.ShieldDecision;
+import com.shieldlm.detection.RiskSignal;
+import com.shieldlm.output.OutputRiskType;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.ArgumentCaptor;
@@ -36,14 +38,15 @@ class AuditLogServiceTests {
                         DefenseAction.BLOCK,
                         70,
                         List.of(
-                                new DetectionHit("IGNORE_PREVIOUS_RULES", AttackType.PRIVILEGE_OVERRIDE, 30),
-                                new DetectionHit("SYSTEM_PROMPT_LEAK", AttackType.PROMPT_EXTRACTION, 40)
+                                new DetectionHit("IGNORE_PREVIOUS_RULES", AttackType.PRIVILEGE_OVERRIDE, 30, List.of(RiskSignal.OVERRIDE_INTENT)),
+                                new DetectionHit("SYSTEM_PROMPT_LEAK", AttackType.PROMPT_EXTRACTION, 40, List.of(RiskSignal.PROMPT_LEAK_INTENT))
                         ),
                         "Request blocked"
                 ),
                 "",
                 "Request blocked",
-                false
+                true,
+                OutputRiskType.PROMPT_LEAK
         );
 
         auditLogService.save(response);
@@ -54,8 +57,10 @@ class AuditLogServiceTests {
 
         assertThat(record.getUserPrompt()).isEqualTo(response.userPrompt());
         assertThat(record.getAttackTypes()).contains("PRIVILEGE_OVERRIDE", "PROMPT_EXTRACTION");
+        assertThat(record.getRiskSignals()).contains("OVERRIDE_INTENT", "PROMPT_LEAK_INTENT");
         assertThat(record.getRiskLevel()).isEqualTo(RiskLevel.HIGH);
         assertThat(record.getDefenseAction()).isEqualTo(DefenseAction.BLOCK);
+        assertThat(record.getOutputRiskType()).isEqualTo("PROMPT_LEAK");
         assertThat(record.getFinalReply()).isEqualTo("Request blocked");
     }
 }

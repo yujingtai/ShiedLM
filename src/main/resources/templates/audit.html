@@ -23,7 +23,7 @@
     <section class="panel">
         <div class="panel-header">
             <h2>最近请求记录</h2>
-            <p>这里展示每次输入触发的风险等级、防御动作和最终输出，用于回溯防护链路。</p>
+            <p>主表先看风险概览和处置结果，展开详情后再查看命中标签、输出风险和最终回复。</p>
         </div>
 
         <form class="filter-form" th:action="@{/audit}" method="get">
@@ -33,7 +33,7 @@
                        name="keyword"
                        type="text"
                        th:value="${keyword}"
-                       placeholder="搜索提示词、攻击类型或最终回复">
+                       placeholder="搜索提示词、攻击类型、风险信号或最终回复">
             </div>
             <div class="filter-field">
                 <label for="riskLevel">风险等级</label>
@@ -41,9 +41,9 @@
                     <option value="">全部</option>
                     <option th:each="risk : ${riskLevels}"
                             th:value="${risk.name()}"
-                            th:text="${risk.name()}"
+                            th:text="${@viewTexts.riskLevel(risk)}"
                             th:selected="${selectedRiskLevel == risk}">
-                        HIGH
+                        高风险
                     </option>
                 </select>
             </div>
@@ -53,9 +53,9 @@
                     <option value="">全部</option>
                     <option th:each="action : ${defenseActions}"
                             th:value="${action.name()}"
-                            th:text="${action.name()}"
+                            th:text="${@viewTexts.defenseAction(action)}"
                             th:selected="${selectedDefenseAction == action}">
-                        BLOCK
+                        输入拦截
                     </option>
                 </select>
             </div>
@@ -91,35 +91,103 @@
         </section>
 
         <div class="table-shell" th:if="${!#lists.isEmpty(records)}">
-            <table class="audit-table">
+            <table class="audit-table audit-table-fixed">
+                <colgroup>
+                    <col class="audit-col-time">
+                    <col class="audit-col-prompt">
+                    <col class="audit-col-summary">
+                    <col class="audit-col-outcome">
+                    <col class="audit-col-detail">
+                </colgroup>
                 <thead>
                 <tr>
                     <th>时间</th>
                     <th>用户输入</th>
-                    <th>攻击类型</th>
-                    <th>风险等级</th>
-                    <th>防御动作</th>
-                    <th>最终回复</th>
+                    <th>风险摘要</th>
+                    <th>处置结果</th>
+                    <th>详情</th>
                 </tr>
                 </thead>
                 <tbody>
-                <tr th:each="record : ${records}">
+                <tr th:each="record, stat : ${records}">
                     <td th:text="${#temporals.format(record.createdAt, 'MM-dd HH:mm:ss')}">04-06 20:30:00</td>
-                    <td th:text="${record.userPrompt}">prompt</td>
-                    <td th:text="${record.attackTypes}">PROMPT_EXTRACTION</td>
-                    <td>
-                        <span class="risk-badge"
-                              th:text="${record.riskLevel}"
-                              th:classappend="${' risk-' + #strings.toLowerCase(record.riskLevel.name())}">
-                            HIGH
-                        </span>
+                    <td class="audit-prompt-cell">
+                        <div class="prompt-preview" th:text="${record.userPrompt}">prompt</div>
                     </td>
-                    <td th:text="${record.defenseAction}">BLOCK</td>
-                    <td th:text="${record.finalReply}">request blocked</td>
+                    <td class="audit-summary-cell">
+                        <div class="audit-tags">
+                            <span class="tag"
+                                  th:if="${record.attackTypes != null and !#strings.isEmpty(#strings.trim(record.attackTypes))}"
+                                  th:text="${@viewTexts.attackTypes(record.attackTypes)}">提示词窃取</span>
+                            <span class="tag tag-subtle"
+                                  th:if="${record.outputRiskType != null and record.outputRiskType != 'NONE'}"
+                                  th:text="${@viewTexts.outputRiskType(record.outputRiskType)}">提示词泄露</span>
+                        </div>
+                        <p class="audit-signal-text"
+                           th:if="${record.riskSignals != null and !#strings.isEmpty(#strings.trim(record.riskSignals))}"
+                           th:text="${@viewTexts.riskSignals(record.riskSignals)}">提示词泄露意图</p>
+                        <p class="audit-signal-text is-empty"
+                           th:if="${(record.attackTypes == null or #strings.isEmpty(#strings.trim(record.attackTypes))) and (record.riskSignals == null or #strings.isEmpty(#strings.trim(record.riskSignals))) and (record.outputRiskType == null or record.outputRiskType == 'NONE')}">
+                            无明显风险标签
+                        </p>
+                    </td>
+                    <td>
+                        <div class="audit-outcome">
+                            <span class="risk-badge"
+                                  th:text="${@viewTexts.riskLevel(record.riskLevel)}"
+                                  th:classappend="${' risk-' + #strings.toLowerCase(record.riskLevel.name())}">
+                                高风险
+                            </span>
+                            <p class="audit-outcome-text"
+                               th:text="${@viewTexts.auditOutcome(record.defenseAction, record.outputBlocked)}">输入拦截</p>
+                        </div>
+                    </td>
+                    <td class="audit-detail-cell">
+                        <button type="button"
+                                class="detail-trigger"
+                                th:attr="data-modal-target=${'audit-detail-' + stat.index}">
+                            查看详情
+                        </button>
+                        <div class="record-modal-content is-hidden"
+                             th:id="${'audit-detail-' + stat.index}">
+                            <div class="record-detail-grid">
+                                <section class="record-detail-card">
+                                    <h4>攻击类型</h4>
+                                    <p th:text="${record.attackTypes != null and !#strings.isEmpty(#strings.trim(record.attackTypes)) ? @viewTexts.attackTypes(record.attackTypes) : '无'}">提示词窃取</p>
+                                </section>
+                                <section class="record-detail-card">
+                                    <h4>风险信号</h4>
+                                    <p th:text="${record.riskSignals != null and !#strings.isEmpty(#strings.trim(record.riskSignals)) ? @viewTexts.riskSignals(record.riskSignals) : '无'}">提示词泄露意图</p>
+                                </section>
+                                <section class="record-detail-card">
+                                    <h4>输入处置</h4>
+                                    <p th:text="${@viewTexts.defenseAction(record.defenseAction)}">输入拦截</p>
+                                </section>
+                                <section class="record-detail-card">
+                                    <h4>输出风险</h4>
+                                    <p th:text="${@viewTexts.outputRiskType(record.outputRiskType)}">无</p>
+                                </section>
+                            </div>
+                            <section class="record-detail-block">
+                                <h4>最终回复</h4>
+                                <p th:text="${record.finalReply}">request blocked</p>
+                            </section>
+                        </div>
+                    </td>
                 </tr>
                 </tbody>
             </table>
         </div>
+
+        <dialog id="audit-detail-dialog" class="audit-detail-dialog">
+            <div class="audit-dialog-shell">
+                <div class="audit-dialog-header">
+                    <h3>记录详情</h3>
+                    <button type="button" class="audit-dialog-close" data-dialog-close>关闭</button>
+                </div>
+                <div class="audit-dialog-body" data-dialog-body></div>
+            </div>
+        </dialog>
 
         <nav class="pagination-bar" th:if="${totalPages > 1}">
             <a th:if="${hasPrevious}"
@@ -140,5 +208,6 @@
         <p class="empty-hint" th:if="${#lists.isEmpty(records)}">当前筛选条件下暂无审计记录。</p>
     </section>
 </main>
+<script th:src="@{/js/audit.js}"></script>
 </body>
 </html>

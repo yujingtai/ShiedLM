@@ -82,28 +82,48 @@ mvn test
 
 ## 当前运行模式
 
-项目默认使用 `mock` 模式驱动模型返回，配置位于 `src/main/resources/application.yml`：
+项目默认使用兼容 OpenAI 协议的真实模型接口，配置位于 `src/main/resources/application.yml`：
 
 ```yml
 shieldlm:
   model:
-    mode: mock
+    mode: ${SHIELDLM_MODEL_MODE:api}
+    base-url: ${SHIELDLM_BASE_URL:https://api.deepseek.com}
+    model-name: ${SHIELDLM_MODEL_NAME:deepseek-chat}
+    api-key: ${SHIELDLM_API_KEY:}
+    chat-path: ${SHIELDLM_CHAT_PATH:/chat/completions}
 ```
 
-这样做的目的，是先保证主链路演示稳定，再逐步补充真实模型接入能力。
+项目启动前至少需要设置：
+
+- `SHIELDLM_API_KEY`
+
+如果你需要切回演示兜底模式，可以临时设置：
+
+- `SHIELDLM_MODEL_MODE=mock`
+
+PowerShell 启动示例：
+
+```powershell
+$env:SHIELDLM_API_KEY="你的私有 key"
+mvn spring-boot:run
+```
+
+当前默认地址为 `https://api.deepseek.com`，默认模型为 `deepseek-chat`。
 
 ## 已实现与未实现边界
 
 ### 已实现
 
 - 防护主链路可以完整跑通
+- 已接入兼容 OpenAI 的真实模型调用
 - 聊天、审计、规则三个页面均可访问
 - 审计记录支持风险等级与防御动作筛选
 - 页面已内置演示样例，可快速复现场景
 
 ### 暂未完成
 
-- 真实大模型 API 仍是预留接口，尚未完成正式接入
+- 流式输出与多轮上下文暂未接入
 - 审计页尚未加入关键词搜索、分页、导出能力
 - 统计页目前以基础指标为主，尚未补充趋势图与更细粒度分析
 

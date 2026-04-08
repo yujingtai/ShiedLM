@@ -43,12 +43,20 @@ public class ChatController {
     @PostMapping("/chat")
     public String submit(@ModelAttribute("chatForm") ChatForm chatForm, Model model) {
         String userPrompt = chatForm.getPrompt() == null ? "" : chatForm.getPrompt();
-        ShieldResponse response = shieldPipelineService.handle(userPrompt);
-        auditLogService.save(response);
-
         model.addAttribute("chatForm", chatForm);
-        model.addAttribute("response", response);
-        model.addAttribute("submitted", true);
+        try {
+            ShieldResponse response = shieldPipelineService.handle(userPrompt);
+            auditLogService.save(response);
+
+            model.addAttribute("response", response);
+            model.addAttribute("submitted", true);
+        } catch (IllegalStateException exception) {
+            model.addAttribute("submitted", false);
+            model.addAttribute("errorMessage", exception.getMessage());
+        } catch (RuntimeException exception) {
+            model.addAttribute("submitted", false);
+            model.addAttribute("errorMessage", exception.getMessage());
+        }
         return "chat";
     }
 }

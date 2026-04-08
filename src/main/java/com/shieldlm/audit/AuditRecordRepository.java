@@ -23,6 +23,8 @@ public interface AuditRecordRepository extends JpaRepository<AuditRecord, Long> 
               and (:keyword is null
                    or lower(coalesce(r.userPrompt, '')) like lower(concat('%', :keyword, '%'))
                    or lower(coalesce(r.attackTypes, '')) like lower(concat('%', :keyword, '%'))
+                   or lower(coalesce(r.riskSignals, '')) like lower(concat('%', :keyword, '%'))
+                   or lower(coalesce(r.outputRiskType, '')) like lower(concat('%', :keyword, '%'))
                    or lower(coalesce(r.finalReply, '')) like lower(concat('%', :keyword, '%')))
             """)
     Page<AuditRecord> search(

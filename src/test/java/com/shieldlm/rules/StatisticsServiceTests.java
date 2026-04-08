@@ -42,18 +42,22 @@ class StatisticsServiceTests {
                         LocalDateTime.of(2026, 4, 7, 10, 0),
                         "p1",
                         "PROMPT_EXTRACTION, PRIVILEGE_OVERRIDE",
+                        "PROMPT_LEAK_INTENT, OVERRIDE_INTENT",
                         RiskLevel.HIGH,
                         DefenseAction.BLOCK,
                         false,
+                        "NONE",
                         "r1"
                 ),
                 new AuditRecord(
                         LocalDateTime.of(2026, 4, 7, 10, 5),
                         "p2",
                         "PROMPT_EXTRACTION",
+                        "PROMPT_LEAK_INTENT",
                         RiskLevel.MEDIUM,
                         DefenseAction.REWRITE,
                         false,
+                        "NONE",
                         "r2"
                 )
         ));
